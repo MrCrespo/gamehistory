@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="no-referrer" />
+  <title>GameHistory - Os Titãs da Indústria</title>
+  
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #0b0f19; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background-color: #0b0f19; border-bottom: 1px solid #1e293b; }
+    .navbar .brand { font-size: 24px; font-weight: 800; color: #818cf8; cursor: pointer; background: none; border: none; letter-spacing: -0.5px; }
+    .navbar-actions { display: flex; gap: 15px; }
+    .btn-nav { display: flex; align-items: center; gap: 8px; background: transparent; color: #f8fafc; border: 1px solid #334155; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-weight: 500; }
+    .btn-nav:hover { background: #1e293b; border-color: #475569; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+    
+    .hero { text-align: center; padding: 40px 20px 60px; }
+    .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 15px; color: #ffffff; }
+    .hero p { color: #94a3b8; font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+    .section-title { font-size: 1.5rem; font-weight: 700; border-bottom: 1px solid #1e293b; padding-bottom: 15px; margin: 40px 0 25px; color: #f8fafc; }
+    .article-text { color: #cbd5e1; font-size: 1.1rem; line-height: 1.8; margin: 25px 0; background: #1e293b; padding: 20px 25px; border-left: 4px solid #818cf8; border-radius: 0 8px 8px 0; white-space: pre-line; }
+
+    .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .category-card { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 12px; cursor: pointer; transition: all 0.2s; text-align: left; display: flex; flex-direction: column; justify-content: center; min-height: 130px; }
+    .category-card:hover { transform: translateY(-3px); border-color: #64748b; background: #27354f; }
+    .category-card h3 { color: #ffffff; margin-bottom: 10px; font-size: 1.1rem; line-height: 1.3; }
+    .category-card p { color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
+
+    .gen-banner { position: relative; width: 100%; height: 320px; border-radius: 16px; overflow: hidden; margin-bottom: 10px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); border: 1px solid #334155; background-color: #1e293b; }
+    .gen-banner-images { display: flex; width: 100%; height: 100%; }
+    .gen-banner-images img { flex: 1; min-width: 0; object-fit: contain; padding: 20px; object-position: center; border-right: 2px solid #0b0f19; background-color: #ffffff; }
+    .gen-banner-images img:last-child { border-right: none; }
+    .gen-banner-overlay { position: absolute; inset: 0; background: linear-gradient(to top, #0b0f19 5%, rgba(11,15,25,0.7) 40%, rgba(0,0,0,0.1) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 30px; }
+    .gen-banner-overlay h2 { font-size: 2.2rem; color: #ffffff; font-weight: 800; margin-bottom: 5px; text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
+    .gen-banner-overlay p { color: #cbd5e1; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.9); max-width: 600px; font-weight: 500; }
+
+    .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; margin-bottom: 30px; }
+    .game-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; overflow: hidden; position: relative; display: flex; flex-direction: column; transition: transform 0.2s; }
+    .game-card:hover { transform: translateY(-5px); border-color: #475569; }
+    .game-card img { width: 100%; height: 300px; object-fit: cover; object-position: top; border-bottom: 1px solid #334155; }
+    .game-card .rank { position: absolute; top: 12px; left: 12px; background: #818cf8; color: #ffffff; font-weight: 800; padding: 6px 12px; border-radius: 20px; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    .game-card .info { padding: 20px; }
+    .game-card h3 { font-size: 1.1rem; margin-bottom: 10px; color: #ffffff; line-height: 1.2; }
+    .game-card p { font-size: 0.9rem; color: #94a3b8; margin-bottom: 5px; }
+    .game-card strong { color: #cbd5e1; }
+
+    .admin-panels { display: flex; gap: 30px; flex-wrap: wrap; margin-top: 25px; }
+    .admin-form { flex: 1; min-width: 300px; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; }
+    .admin-form h3 { margin-bottom: 20px; color: #f8fafc; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+    .admin-form input, .admin-form select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #334155; border-radius: 8px; font-size: 15px; background: #0b0f19; color: #f8fafc; }
+    .admin-form input:focus, .admin-form select:focus { outline: none; border-color: #818cf8; }
+    .admin-form button { width: 100%; padding: 14px; background: #818cf8; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+    .game-list { margin-top: 40px; }
+    .game-list li { background: #1e293b; margin-bottom: 10px; padding: 15px 20px; display: flex; justify-content: space-between; border: 1px solid #334155; border-radius: 8px; align-items: center; color: #cbd5e1; }
+    .btn-delete { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #10b981; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; animation: slideIn 0.3s forwards; }
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const homeCategories = [
+      { 
+        type: 'console', 
+        title: '3ª Geração (8-bit: NES, Master System)', 
+        desc: 'A era da ressurreição dos consoles após o crash de 1983.', 
+        bannerImgs: [
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/NES-Console-Set.png/800px-NES-Console-Set.png',
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Sega-Master-System-Set.jpg/800px-Sega-Master-System-Set.jpg'
+        ],
+        textTop: 'A terceira geração de consoles (a era dos 8-bits) foi um monopólio quase absoluto da Nintendo. Como o NES (Nintendinho) vendeu mais de 61 milhões de unidades globalmente — superando de longe o Sega Master System e o Atari 7800 —, todos os 10 jogos mais vendidos daquela geração pertencem a ele.',
+        textBottom: 'A diferença de vendas entre os três primeiros colocados e o restante da lista ilustra o fenômeno cultural e comercial que a franquia Mario representou para a reestruturação do mercado de videogames na época.'
+      },
+      { 
+        type: 'console', 
+        title: '4ª Geração (16-bit: SNES, Mega Drive)', 
+        desc: 'A guerra dos 16-bits e o auge dos jogos de plataforma 2D.', 
+        bannerImgs: [
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/SNES-Mod1-Console-Set.jpg/800px-SNES-Mod1-Console-Set.jpg',
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Sega-Genesis-Mod1-Set.jpg/800px-Sega-Genesis-Mod1-Set.jpg'
+        ],
+        textTop: 'Diferente da geração anterior, onde a Nintendo desenvolveu todos os maiores sucessos sozinha, o top 10 dos 16-bits mostra a força de estúdios parceiros (third-party e second-party), com a presença da Capcom e da Rare.'
+      },
+      { 
+        type: 'console', 
+        title: '5ª Geração (32/64-bit: PS1, N64)', 
+        desc: 'A transição revolucionária para os gráficos em 3D.', 
+        bannerImgs: [
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/PSX-Console-wController.jpg/800px-PSX-Console-wController.jpg',
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/N64-Console-Set.jpg/800px-N64-Console-Set.jpg'
+        ],
+        textTop: 'A quinta geração de consoles marcou a transição definitiva da indústria para os gráficos em 3D e consolidou o CD-ROM como a mídia de armazenamento padrão (embora a Nintendo tenha continuado fiel aos cartuchos). Foi nesse período que a Sony entrou de vez no mercado com o PlayStation (PS1), dominando completamente as vendas de hardware.\nApesar de o PlayStation ter vendido quase o triplo de unidades do Nintendo 64 (N64), o top 10 de softwares mostra um cenário bem mais equilibrado, refletindo o forte apelo das franquias originais da Nintendo (com 4 jogos na lista) contra a diversidade do catálogo da Sony (com 6 jogos). O Sega Saturn, terceiro concorrente de peso da geração, não emplacou jogos nesta lista.'
+      },
+      { 
+        type: 'console', 
+        title: '6ª Geração (PS2, Xbox, GameCube)', 
+        desc: 'Consoles viram centrais multimídia. O reinado do PS2.', 
+        bannerImgs: [
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/PS2-Versions.jpg/800px-PS2-Versions.jpg',
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Xbox-Console-Set.jpg/800px-Xbox-Console-Set.jpg',
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/GameCube-Console-Set.jpg/800px-GameCube-Console-Set.jpg'
+        ],
+        textTop: 'A sexta geração de consoles (era dos 128-bits) foi marcada pelo domínio esmagador do PlayStation 2, que viria a se tornar o console mais vendido de todos os tempos. Ao contrário da geração anterior, a força das desenvolvedoras third-party (terceirizadas) definiu o mercado, com a Rockstar Games liderando a revolução dos jogos de mundo aberto tridimensionais.'
+      },
+      { 
+        type: 'console', 
+        title: '7ª Geração (PS3, X360, Wii)', 
+        desc: 'A era da alta definição (HD) e controles de movimento.', 
+        bannerImgs: [
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Sony-PlayStation-3-CECHA01-wController-L.jpg/800px-Sony-PlayStation-3-CECHA01-wController-L.jpg',
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Xbox-360-S-Console-Set.jpg/800px-Xbox-360-S-Console-Set.jpg',
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Wii_console.png/800px-Wii_console.png'
+        ],
+        textTop: 'A sétima geração revelou uma divisão impressionante no mercado. De um lado, a Nintendo conquistou um público gigantesco e sem precedentes com os controles de movimento do Wii, focando em experiências mais casuais e acessíveis. Do outro, Sony e Microsoft (PS3 e Xbox 360) travaram uma batalha acirrada impulsionada por jogos de tiro e ação de altíssimo orçamento, estabelecendo o multiplayer online como o novo padrão da indústria.\n\nEssa dicotomia fica extremamente evidente nos números. Metade do top 10 é dominada por jogos da própria Nintendo (a maioria projetada para demonstrar o controle do Wii), enquanto o restante é quase inteiramente ocupado pelo fenômeno anual de Call of Duty e o colossal lançamento de GTA V no fim da geração.'
+      },
+      { 
+        type: 'console', 
+        title: '8ª Geração (PS4, XB1, Wii U, Switch)', 
+        desc: 'Conectividade social, streaming e resoluções 4K.', 
+        bannerImgs: [
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/PlayStation-4-Console-Set.jpg/800px-PlayStation-4-Console-Set.jpg',
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Xbox-One-Console-Set.jpg/800px-Xbox-One-Console-Set.jpg',
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Nintendo_Switch_Console.png/800px-Nintendo_Switch_Console.png'
+        ],
+        textTop: 'A oitava geração foi definida por uma virada histórica no mercado. Após o fracasso comercial do Wii U, a Nintendo se reinventou com o Switch, um console híbrido que pulverizou recordes e dominou a lista de softwares. Do outro lado, o PlayStation 4 (PS4) venceu com folga a concorrência direta contra o Xbox One, impulsionado por suas aclamadas produções cinematográficas exclusivas.\n\nOs números desta geração são massivos e demonstram também o poder duradouro da Rockstar Games, que não apenas manteve GTA V no topo (relançado e impulsionado nesta geração), mas também entregou o colossal Red Dead Redemption 2.'
+      },
+      { 
+        type: 'console', 
+        title: '9ª Geração (PS5, Series X|S)', 
+        desc: 'Tempos de carregamento quase nulos com SSDs e Ray Tracing.', 
+        bannerImgs: [
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/PlayStation_5_and_DualSense_with_transparent_background.png/800px-PlayStation_5_and_DualSense_with_transparent_background.png'
+        ],
+        textTop: 'A nona geração, que engloba o PlayStation 5 e os consoles Xbox Series X/S, trouxe uma mudança significativa na forma como o sucesso de um jogo é medido. Com a ascensão do Xbox Game Pass, a Microsoft parou de divulgar os números tradicionais de "cópias vendidas" para focar no "número de jogadores", tornando os dados de vendas diretas do Xbox quase impossíveis de se isolar.\nPor conta disso, a lista de jogos mais vendidos desta geração é amplamente dominada pelos exclusivos do PS5 (cujos números a Sony divulga regularmente) e por fenômenos multiplataforma que quebram recordes.'
+      },
+      { 
+        type: 'outras', 
+        title: 'PC Master Race', 
+        desc: 'A plataforma definitiva em evolução contínua.', 
+        bannerImgs: ['https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Alienware_Aurora_R4_gaming_desktop_2.jpg/800px-Alienware_Aurora_R4_gaming_desktop_2.jpg'],
+        textTop: 'O mercado de computadores (PC) tem uma dinâmica muito própria: muitos dos maiores sucessos históricos da plataforma são jogos que venderam de forma contínua ao longo de mais de uma década, além de títulos que nasceram no PC e depois se expandiram para outras plataformas.\n\nQuando filtramos estritamente para os jogos com os maiores volumes de vendas originados ou consolidados no PC, este é o panorama dos campeões absolutos.'
+      },
+      { 
+        type: 'outras', 
+        title: 'Consoles Portáteis', 
+        desc: 'De Game Boy a Nintendo DS: jogatina em qualquer lugar.', 
+        bannerImgs: [
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Game-Boy-Original.jpg/800px-Game-Boy-Original.jpg',
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Nintendo-DS-Lite-Black-Open.jpg/800px-Nintendo-DS-Lite-Black-Open.jpg'
+        ],
+        textTop: 'O mercado de portáteis clássicos foi um território quase intocável da Nintendo, que reinou absoluta por décadas com o Game Boy, o Game Boy Advance e o Nintendo DS, superando concorrentes históricos como o Game Gear (Sega) e o PlayStation Portable (Sony).'
+      }
+    ];
+
+    const initDB = () => {
+      // Usando 'games_v14' para carregar os dados atualizados instantaneamente
+      if (!localStorage.getItem('games_v14')) {
+        const initialGames = [
+          // 3ª Geração
+          { id: 1, title: 'Super Mario Bros.', generation: '3ª Geração (8-bit: NES, Master System)', sales: 40.24, year: 1985, developer: 'Nintendo', img: 'https://upload.wikimedia.org/wikipedia/en/0/03/Super_Mario_Bros._box.png' },
+          { id: 2, title: 'Duck Hunt', generation: '3ª Geração (8-bit: NES, Master System)', sales: 28.31, year: 1984, developer: 'Nintendo', img: 'https://upload.wikimedia.org/wikipedia/en/1/14/DuckHuntBox.jpg' },
+          { id: 3, title: 'Super Mario Bros. 3', generation: '3ª Geração (8-bit: NES, Master System)', sales: 18.00, year: 1988, developer: 'Nintendo', img: 'https://upload.wikimedia.org/wikipedia/en/a/a5/Super_Mario_Bros._3_coverart.png' },
+          { id: 4, title: 'Tetris', generation: '3ª Geração (8-bit: NES, Master System)', sales: 8.00, year: 1989, developer: 'Nintendo', img: 'https://upload.wikimedia.org/wikipedia/en/8/8d/NES_Tetris_Box_Front.jpg' },
+          { id: 5, title: 'Super Mario Bros. 2', generation: '3ª Geração (8-bit: NES, Master System)', sales: 7.46, year: 1988, developer: 'Nintendo', img: 'https://upload.wikimedia.org/wikipedia/en/0/00/Super_Mario_Bros_2.jpg' },
+          { id: 6, title: 'The Legend of Zelda', generation: '3ª Geração (8-bit: NES, Master System)', sales: 6.51, year: 1986, developer: 'Nintendo', img: 'https://upload.wikimedia.org/wikipedia/en/4/41/Legend_of_zelda_cover_%28with_cartridge%29_gold.png' },
+          { id: 7, title: 'Dr. Mario', generation: '3ª Geração (8-bit: NES, Master System)', sales: 4.85, year: 1990, developer: 'Nintendo', img: 'https://upload.wikimedia.org/wikipedia/en/a/a2/Dr_Mario_NES_box_art.jpg' },
+          { id: 8, title: 'Zelda II: The Adventure of Link', generation: '3ª Geração (8-bit: NES, Master System)', sales: 4.38, year: 1987, developer: 'Nintendo', img: 'https://upload.wikimedia.org/wikipedia/en/a/a0/Zelda_II_The_Adventure_of_Link_box.jpg' },
+          { id: 9, title: 'Excitebike', generation: '3ª Geração (8-bit: NES, Master System)', sales: 4.16, year: 1984, developer: 'Nintendo', img: 'https://upload.wikimedia.org/wikipedia/en/9/91/Excitebike_boxart.jpg' },
+          { id: 10, title: 'Golf', generation: '3ª Geração (8-bit: NES, Master System)', sales: 4.01, year: 1984, developer: 'Nintendo', img: 'https://upload.wikimedia.org/wikipedia/en/c/c8/Golf_cover_art.jpg' },
+          
+          // 4ª Geração
+          { id: 11, title: 'Super Mario World', generation: '4ª Geração (16-bit: SNES, Mega Drive)', sales: 20.61, year: 1990, developer: 'Nintendo (EAD)', img: 'https://upload.wikimedia.org/wikipedia/en/3/32/Super_Mario_World_Coverart.png' },
+          { id: 12, title: 'Sonic the Hedgehog', generation: '4ª Geração (16-bit: SNES, Mega Drive)', sales: 15.00, year: 1991, developer: 'Sonic Team (Sega)', img: 'https://upload.wikimedia.org/wikipedia/en/b/ba/Sonic_the_Hedgehog_1_Genesis_box_art.jpg' },
+          { id: 13, title: 'Super Mario All-Stars', generation: '4ª Geração (16-bit: SNES, Mega Drive)', sales: 10.55, year: 1993, developer: 'Nintendo (EAD)', img: 'https://upload.wikimedia.org/wikipedia/en/1/14/Super_Mario_All-Stars_SNES_box_art.jpg' },
+          { id: 14, title: 'Donkey Kong Country', generation: '4ª Geração (16-bit: SNES, Mega Drive)', sales: 9.30, year: 1994, developer: 'Rare', img: 'https://upload.wikimedia.org/wikipedia/en/c/c1/Donkey_Kong_Country_SNES_box_art.jpg' },
+          { id: 15, title: 'Super Mario Kart', generation: '4ª Geração (16-bit: SNES, Mega Drive)', sales: 8.76, year: 1992, developer: 'Nintendo (EAD)', img: 'https://upload.wikimedia.org/wikipedia/en/3/38/Supermariokart_box.JPG' },
+          { id: 16, title: 'Street Fighter II: The World Warrior', generation: '4ª Geração (16-bit: SNES, Mega Drive)', sales: 6.30, year: 1992, developer: 'Capcom', img: 'https://upload.wikimedia.org/wikipedia/en/1/1d/SF2_SNES_box_art.jpg' },
+          { id: 17, title: 'Sonic the Hedgehog 2', generation: '4ª Geração (16-bit: SNES, Mega Drive)', sales: 6.00, year: 1992, developer: 'Sega Technical Institute', img: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Sonic_2_US_Cover.jpg' },
+          { id: 18, title: 'Donkey Kong Country 2: Diddy\'s Kong Quest', generation: '4ª Geração (16-bit: SNES, Mega Drive)', sales: 5.15, year: 1995, developer: 'Rare', img: 'https://upload.wikimedia.org/wikipedia/en/5/58/Donkey_Kong_Country_2_SNES_box_art.jpg' },
+          { id: 19, title: 'The Legend of Zelda: A Link to the Past', generation: '4ª Geração (16-bit: SNES, Mega Drive)', sales: 4.61, year: 1991, developer: 'Nintendo (EAD)', img: 'https://upload.wikimedia.org/wikipedia/en/2/21/The_Legend_of_Zelda_A_Link_to_the_Past_SNES_Game_Cover.jpg' },
+          { id: 20, title: 'Super Mario World 2: Yoshi\'s Island', generation: '4ª Geração (16-bit: SNES, Mega Drive)', sales: 4.12, year: 1995, developer: 'Nintendo (EAD)', img: 'https://upload.wikimedia.org/wikipedia/en/0/00/Super_Mario_World_2_cover.jpg' },
+
+          // 5ª Geração (PS1 e N64)
+          { id: 21, title: 'Super Mario 64', generation: '5ª Geração (32/64-bit: PS1, N64)', sales: 11.91, year: 1996, developer: 'Nintendo EAD', img: 'https://upload.wikimedia.org/wikipedia/en/9/9f/Super_Mario_64_boxart.jpg' },
+          { id: 22, title: 'Gran Turismo', generation: '5ª Geração (32/64-bit: PS1, N64)', sales: 10.85, year: 1997, developer: 'Polyphony Digital', img: 'https://upload.wikimedia.org/wikipedia/en/6/67/Gran_Turismo_1_Cover.jpg' },
+          { id: 23, title: 'Final Fantasy VII', generation: '5ª Geração (32/64-bit: PS1, N64)', sales: 10.02, year: 1997, developer: 'Square', img: 'https://upload.wikimedia.org/wikipedia/en/c/c2/Final_Fantasy_VII_Box_Art.jpg' },
+          { id: 24, title: 'Mario Kart 64', generation: '5ª Geração (32/64-bit: PS1, N64)', sales: 9.87, year: 1996, developer: 'Nintendo EAD', img: 'https://upload.wikimedia.org/wikipedia/en/b/b0/Mario_Kart_64_box.jpg' },
+          { id: 25, title: 'Gran Turismo 2', generation: '5ª Geração (32/64-bit: PS1, N64)', sales: 9.37, year: 1999, developer: 'Polyphony Digital', img: 'https://upload.wikimedia.org/wikipedia/en/b/bd/Gran_Turismo_2_Cover.jpg' },
+          { id: 26, title: 'Final Fantasy VIII', generation: '5ª Geração (32/64-bit: PS1, N64)', sales: 8.60, year: 1999, developer: 'Square', img: 'https://upload.wikimedia.org/wikipedia/en/a/a3/Final_Fantasy_VIII_Box_Art.jpg' },
+          { id: 27, title: 'Tekken 3', generation: '5ª Geração (32/64-bit: PS1, N64)', sales: 8.30, year: 1998, developer: 'Namco', img: 'https://upload.wikimedia.org/wikipedia/en/a/a2/Tekken_3_cover.jpg' },
+          { id: 28, title: 'GoldenEye 007', generation: '5ª Geração (32/64-bit: PS1, N64)', sales: 8.09, year: 1997, developer: 'Rare', img: 'https://upload.wikimedia.org/wikipedia/en/e/ec/GoldenEye_007_Cover.jpg' },
+          { id: 29, title: 'The Legend of Zelda: Ocarina of Time', generation: '5ª Geração (32/64-bit: PS1, N64)', sales: 7.60, year: 1998, developer: 'Nintendo EAD', img: 'https://upload.wikimedia.org/wikipedia/en/5/57/The_Legend_of_Zelda_Ocarina_of_Time_Box_Art.jpg' },
+          { id: 30, title: 'Crash Bandicoot 2: Cortex Strikes Back', generation: '5ª Geração (32/64-bit: PS1, N64)', sales: 7.58, year: 1997, developer: 'Naughty Dog', img: 'https://upload.wikimedia.org/wikipedia/en/2/2f/Crash_Bandicoot_2_Cortex_Strikes_Back_Cover.jpg' },
+
+          // 6ª Geração (PS2, Xbox, GameCube)
+          { id: 31, title: 'Grand Theft Auto: San Andreas', generation: '6ª Geração (PS2, Xbox, GameCube)', sales: 27.50, year: 2004, developer: 'Rockstar North', img: 'https://upload.wikimedia.org/wikipedia/en/c/c5/Grand_Theft_Auto_San_Andreas.jpg' },
+          { id: 32, title: 'Grand Theft Auto: Vice City', generation: '6ª Geração (PS2, Xbox, GameCube)', sales: 17.50, year: 2002, developer: 'Rockstar North', img: 'https://upload.wikimedia.org/wikipedia/en/c/dc/Grand_Theft_Auto_Vice_City_cover.png' },
+          { id: 33, title: 'Gran Turismo 3: A-Spec', generation: '6ª Geração (PS2, Xbox, GameCube)', sales: 14.89, year: 2001, developer: 'Polyphony Digital', img: 'https://upload.wikimedia.org/wikipedia/en/2/22/Gran_Turismo_3_Cover.jpg' },
+          { id: 34, title: 'Grand Theft Auto III', generation: '6ª Geração (PS2, Xbox, GameCube)', sales: 14.50, year: 2001, developer: 'Rockstar North', img: 'https://upload.wikimedia.org/wikipedia/en/b/b5/Grand_Theft_Auto_III_Cover.jpg' },
+          { id: 35, title: 'Gran Turismo 4', generation: '6ª Geração (PS2, Xbox, GameCube)', sales: 11.76, year: 2004, developer: 'Polyphony Digital', img: 'https://upload.wikimedia.org/wikipedia/en/7/7b/Gran_Turismo_4_cover.jpg' },
+          { id: 36, title: 'Final Fantasy X', generation: '6ª Geração (PS2, Xbox, GameCube)', sales: 8.50, year: 2001, developer: 'SquareSoft', img: 'https://upload.wikimedia.org/wikipedia/en/d/da/Final_Fantasy_X_Cover.jpg' },
+          { id: 37, title: 'Halo 2', generation: '6ª Geração (PS2, Xbox, GameCube)', sales: 8.46, year: 2004, developer: 'Bungie', img: 'https://upload.wikimedia.org/wikipedia/en/8/86/Halo_2_cover.png' },
+          { id: 38, title: 'Super Smash Bros. Melee', generation: '6ª Geração (PS2, Xbox, GameCube)', sales: 7.41, year: 2001, developer: 'HAL Laboratory', img: 'https://upload.wikimedia.org/wikipedia/en/3/3b/Super_Smash_Bros._Melee_cover.jpg' },
+          { id: 39, title: 'Metal Gear Solid 2: Sons of Liberty', generation: '6ª Geração (PS2, Xbox, GameCube)', sales: 7.03, year: 2001, developer: 'Konami', img: 'https://upload.wikimedia.org/wikipedia/en/9/93/Metal_Gear_Solid_2_Sons_of_Liberty_cover.png' },
+          { id: 40, title: 'Mario Kart: Double Dash!!', generation: '6ª Geração (PS2, Xbox, GameCube)', sales: 6.96, year: 2003, developer: 'Nintendo (EAD)', img: 'https://upload.wikimedia.org/wikipedia/en/f/f7/Mario_Kart_Double_Dash%21%21_Cover.jpg' },
+
+          // 7ª Geração (PS3, X360, Wii)
+          { id: 41, title: 'Wii Sports', generation: '7ª Geração (PS3, X360, Wii)', sales: 82.90, year: 2006, developer: 'Nintendo EAD', img: 'https://upload.wikimedia.org/wikipedia/en/e/e0/Wii_Sports_capa.png' },
+          { id: 42, title: 'Grand Theft Auto V', generation: '7ª Geração (PS3, X360, Wii)', sales: 37.50, year: 2013, developer: 'Rockstar North', img: 'https://upload.wikimedia.org/wikipedia/en/a/a5/Grand_Theft_Auto_V.png' },
+          { id: 43, title: 'Mario Kart Wii', generation: '7ª Geração (PS3, X360, Wii)', sales: 37.38, year: 2008, developer: 'Nintendo EAD', img: 'https://upload.wikimedia.org/wikipedia/en/b/bb/Mario_Kart_Wii_cover.svg' },
+          { id: 44, title: 'Wii Sports Resort', generation: '7ª Geração (PS3, X360, Wii)', sales: 33.14, year: 2009, developer: 'Nintendo EAD', img: 'https://upload.wikimedia.org/wikipedia/en/f/f2/Wii_Sports_Resort_cover.png' },
+          { id: 45, title: 'Call of Duty: Modern Warfare 3', generation: '7ª Geração (PS3, X360, Wii)', sales: 30.71, year: 2011, developer: 'Infinity Ward / Sledgehammer', img: 'https://upload.wikimedia.org/wikipedia/en/b/b5/Call_of_Duty_Modern_Warfare_3_Box_Art.jpg' },
+          { id: 46, title: 'Call of Duty: Black Ops', generation: '7ª Geração (PS3, X360, Wii)', sales: 30.40, year: 2010, developer: 'Treyarch', img: 'https://upload.wikimedia.org/wikipedia/en/1/1d/COD_Black_Ops_Box_Art.JPG' },
+          { id: 47, title: 'New Super Mario Bros. Wii', generation: '7ª Geração (PS3, X360, Wii)', sales: 30.32, year: 2009, developer: 'Nintendo EAD', img: 'https://upload.wikimedia.org/wikipedia/en/e/e6/New_Super_Mario_Bros._Wii_box.png' },
+          { id: 48, title: 'Call of Duty: Black Ops II', generation: '7ª Geração (PS3, X360, Wii)', sales: 29.59, year: 2012, developer: 'Treyarch', img: 'https://upload.wikimedia.org/wikipedia/en/e/e9/COD_Black_Ops_II_box_art.png' },
+          { id: 49, title: 'Wii Play', generation: '7ª Geração (PS3, X360, Wii)', sales: 28.02, year: 2006, developer: 'Nintendo EAD', img: 'https://upload.wikimedia.org/wikipedia/en/7/73/Wii_Play_Box_Art.png' },
+          { id: 50, title: 'Call of Duty: Modern Warfare 2', generation: '7ª Geração (PS3, X360, Wii)', sales: 25.02, year: 2009, developer: 'Infinity Ward', img: 'https://upload.wikimedia.org/wikipedia/en/f/f7/Modern_Warfare_2_cover.png' },
+
+          // 8ª Geração (PS4, XB1, Wii U, Switch)
+          { id: 51, title: 'Mario Kart 8 / Deluxe', generation: '8ª Geração (PS4, XB1, Wii U, Switch)', sales: 71.36, year: 2014, developer: 'Nintendo (EAD/EPD)', img: 'https://upload.wikimedia.org/wikipedia/en/b/b5/Mario_Kart_8_Deluxe_switch_cover.jpg' },
+          { id: 52, title: 'Grand Theft Auto V', generation: '8ª Geração (PS4, XB1, Wii U, Switch)', sales: 65.00, year: 2014, developer: 'Rockstar North', img: 'https://upload.wikimedia.org/wikipedia/en/a/a5/Grand_Theft_Auto_V.png' },
+          { id: 53, title: 'Red Dead Redemption 2', generation: '8ª Geração (PS4, XB1, Wii U, Switch)', sales: 61.00, year: 2018, developer: 'Rockstar Studios', img: 'https://upload.wikimedia.org/wikipedia/en/4/44/Red_Dead_Redemption_2.jpg' },
+          { id: 54, title: 'Animal Crossing: New Horizons', generation: '8ª Geração (PS4, XB1, Wii U, Switch)', sales: 45.85, year: 2020, developer: 'Nintendo (EPD)', img: 'https://upload.wikimedia.org/wikipedia/en/1/1f/Animal_Crossing_New_Horizons.jpg' },
+          { id: 55, title: 'Super Smash Bros. Ultimate', generation: '8ª Geração (PS4, XB1, Wii U, Switch)', sales: 34.66, year: 2018, developer: 'Bandai Namco / Sora Ltd.', img: 'https://upload.wikimedia.org/wikipedia/en/5/50/Super_Smash_Bros._Ultimate.jpg' },
+          { id: 56, title: 'The Legend of Zelda: Breath of the Wild', generation: '8ª Geração (PS4, XB1, Wii U, Switch)', sales: 33.55, year: 2017, developer: 'Nintendo (EPD)', img: 'https://upload.wikimedia.org/wikipedia/en/c/c6/The_Legend_of_Zelda_Breath_of_the_Wild_cover.jpg' },
+          { id: 57, title: 'Super Mario Odyssey', generation: '8ª Geração (PS4, XB1, Wii U, Switch)', sales: 28.21, year: 2017, developer: 'Nintendo (EPD)', img: 'https://upload.wikimedia.org/wikipedia/en/8/8d/Super_Mario_Odyssey.jpg' },
+          { id: 58, title: 'Pokémon Sword and Shield', generation: '8ª Geração (PS4, XB1, Wii U, Switch)', sales: 26.27, year: 2019, developer: 'Game Freak', img: 'https://upload.wikimedia.org/wikipedia/en/2/2f/Pokemon_Sword_and_Shield_cover_art.png' },
+          { id: 59, title: 'God of War', generation: '8ª Geração (PS4, XB1, Wii U, Switch)', sales: 23.00, year: 2018, developer: 'Santa Monica Studio', img: 'https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg' },
+          { id: 60, title: 'Marvel\'s Spider-Man', generation: '8ª Geração (PS4, XB1, Wii U, Switch)', sales: 20.00, year: 2018, developer: 'Insomniac Games', img: 'https://upload.wikimedia.org/wikipedia/en/e/e6/Marvel%27s_Spider-Man_PS4_cover.jpg' },
+
+          // 9ª Geração (PS5, Series X|S)
+          { id: 61, title: 'Black Myth: Wukong', generation: '9ª Geração (PS5, Series X|S)', sales: 25.0, year: 2024, developer: 'Game Science', img: 'https://upload.wikimedia.org/wikipedia/en/5/50/Black_Myth_Wukong_cover_art.jpg' },
+          { id: 62, title: 'Elden Ring', generation: '9ª Geração (PS5, Series X|S)', sales: 25.0, year: 2022, developer: 'FromSoftware', img: 'https://upload.wikimedia.org/wikipedia/pt/8/8f/Elden_Ring_capa.jpg' },
+          { id: 63, title: 'Hogwarts Legacy', generation: '9ª Geração (PS5, Series X|S)', sales: 24.0, year: 2023, developer: 'Avalanche Software', img: 'https://upload.wikimedia.org/wikipedia/pt/3/36/Hogwarts_Legacy_capa.jpeg' },
+          { id: 64, title: 'Marvel\'s Spider-Man 2', generation: '9ª Geração (PS5, Series X|S)', sales: 17.0, year: 2023, developer: 'Insomniac Games', img: 'https://upload.wikimedia.org/wikipedia/en/e/e3/Spider-Man_2_In_Game_Cover_Art.png' },
+          { id: 65, title: 'God of War: Ragnarök', generation: '9ª Geração (PS5, Series X|S)', sales: 15.0, year: 2022, developer: 'Santa Monica Studio', img: 'https://upload.wikimedia.org/wikipedia/en/e/e1/God_of_War_Ragnarok_cover.jpg' },
+          { id: 66, title: 'Helldivers 2', generation: '9ª Geração (PS5, Series X|S)', sales: 12.0, year: 2024, developer: 'Arrowhead Game Studios', img: 'https://upload.wikimedia.org/wikipedia/en/7/77/Helldivers_2_cover_art.jpg' },
+          { id: 67, title: 'Gran Turismo 7', generation: '9ª Geração (PS5, Series X|S)', sales: 8.9, year: 2022, developer: 'Polyphony Digital', img: 'https://upload.wikimedia.org/wikipedia/en/3/36/Gran_Turismo_7_cover_art.jpg' },
+          { id: 68, title: 'Horizon Forbidden West', generation: '9ª Geração (PS5, Series X|S)', sales: 8.4, year: 2022, developer: 'Guerrilla Games', img: 'https://upload.wikimedia.org/wikipedia/en/6/6d/Horizon_Forbidden_West_cover_art.jpg' },
+          { id: 69, title: 'Resident Evil 4 (Remake)', generation: '9ª Geração (PS5, Series X|S)', sales: 7.0, year: 2023, developer: 'Capcom', img: 'https://upload.wikimedia.org/wikipedia/en/3/3e/Resident_Evil_4_Remake_Cover_Art.png' },
+          { id: 70, title: 'EA Sports FC 26', generation: '9ª Geração (PS5, Series X|S)', sales: 7.0, year: 2025, developer: 'EA Sports', img: 'https://upload.wikimedia.org/wikipedia/en/7/79/EA_Sports_FC_25_cover.jpg' },
+
+          // Consoles Portáteis
+          { id: 71, title: 'Tetris', generation: 'Consoles Portáteis', sales: 35.00, year: 1989, developer: 'Nintendo R&D1', img: 'https://upload.wikimedia.org/wikipedia/en/a/a2/Tetris_Box_Art_GB.jpg' },
+          { id: 72, title: 'Pokémon Red / Green / Blue', generation: 'Consoles Portáteis', sales: 31.30, year: 1996, developer: 'Game Freak', img: 'https://upload.wikimedia.org/wikipedia/en/8/85/Pokemon_Red_Box_Front.jpg' },
+          { id: 73, title: 'New Super Mario Bros.', generation: 'Consoles Portáteis', sales: 30.80, year: 2006, developer: 'Nintendo EAD', img: 'https://upload.wikimedia.org/wikipedia/en/e/ec/New_Super_Mario_Bros._Cover.jpg' },
+          { id: 74, title: 'Nintendogs', generation: 'Consoles Portáteis', sales: 23.96, year: 2005, developer: 'Nintendo EAD', img: 'https://upload.wikimedia.org/wikipedia/en/8/8c/Nintendogs_box_art.jpg' },
+          { id: 75, title: 'Pokémon Gold / Silver', generation: 'Consoles Portáteis', sales: 23.70, year: 1999, developer: 'Game Freak', img: 'https://upload.wikimedia.org/wikipedia/en/f/fca/Pokemon_Gold_Box_Cover.jpg' },
+          { id: 76, title: 'Mario Kart DS', generation: 'Consoles Portáteis', sales: 23.60, year: 2005, developer: 'Nintendo EAD', img: 'https://upload.wikimedia.org/wikipedia/en/e/ef/Mario_Kart_DS_cover.png' },
+          { id: 77, title: 'Brain Age', generation: 'Consoles Portáteis', sales: 19.01, year: 2005, developer: 'Nintendo SPD', img: 'https://upload.wikimedia.org/wikipedia/en/8/8b/Brain_Age_Cover.jpg' },
+          { id: 78, title: 'Pokémon Diamond / Pearl / Platinum', generation: 'Consoles Portáteis', sales: 18.40, year: 2006, developer: 'Game Freak', img: 'https://upload.wikimedia.org/wikipedia/en/8/8d/Pokemon_Diamond_Version.jpg' },
+          { id: 79, title: 'Super Mario Land', generation: 'Consoles Portáteis', sales: 18.14, year: 1989, developer: 'Nintendo R&D1', img: 'https://upload.wikimedia.org/wikipedia/en/3/36/Super_Mario_Land_cover.jpg' },
+          { id: 80, title: 'Pokémon Ruby / Sapphire / Emerald', generation: 'Consoles Portáteis', sales: 16.22, year: 2002, developer: 'Game Freak', img: 'https://upload.wikimedia.org/wikipedia/en/e/ed/Pokemon_Ruby_Box_Art.jpg' },
+
+          // PC Master Race
+          { id: 81, title: 'Minecraft', generation: 'PC Master Race', sales: 40.00, year: 2011, developer: 'Mojang Studios', img: 'https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png' },
+          { id: 82, title: 'PUBG: Battlegrounds', generation: 'PC Master Race', sales: 37.00, year: 2017, developer: 'PUBG Studios', img: 'https://upload.wikimedia.org/wikipedia/en/d/db/PUBG_Battlegrounds_cover.svg' },
+          { id: 83, title: 'Terraria', generation: 'PC Master Race', sales: 32.00, year: 2011, developer: 'Re-Logic', img: 'https://upload.wikimedia.org/wikipedia/en/f/f8/Terraria_1.3_cover.png' },
+          { id: 84, title: 'Stardew Valley', generation: 'PC Master Race', sales: 26.00, year: 2016, developer: 'ConcernedApe', img: 'https://upload.wikimedia.org/wikipedia/en/c/c5/Stardew_Valley_Collector%27s_Edition_artwork.png' },
+          { id: 85, title: 'Garry\'s Mod', generation: 'PC Master Race', sales: 25.40, year: 2006, developer: 'Facepunch Studios', img: 'https://upload.wikimedia.org/wikipedia/en/2/23/Garry%27s_mod_logo.jpg' },
+          { id: 86, title: 'Euro Truck Simulator 2', generation: 'PC Master Race', sales: 22.00, year: 2012, developer: 'SCS Software', img: 'https://upload.wikimedia.org/wikipedia/en/7/74/Euro_Truck_Simulator_2_cover.jpg' },
+          { id: 87, title: 'Phasmophobia', generation: 'PC Master Race', sales: 21.00, year: 2020, developer: 'Kinetic Games', img: 'https://upload.wikimedia.org/wikipedia/en/9/91/Phasmophobia_logo.png' },
+          { id: 88, title: 'Rust', generation: 'PC Master Race', sales: 20.00, year: 2018, developer: 'Facepunch Studios', img: 'https://upload.wikimedia.org/wikipedia/en/d/d5/Rust_video_game_cover.jpg' },
+          { id: 89, title: 'The Sims 2', generation: 'PC Master Race', sales: 18.00, year: 2004, developer: 'Maxis', img: 'https://upload.wikimedia.org/wikipedia/en/8/87/The_Sims_2_Cover.jpg' },
+          { id: 90, title: 'Half-Life 2', generation: 'PC Master Race', sales: 12.00, year: 2004, developer: 'Valve', img: 'https://upload.wikimedia.org/wikipedia/en/2/25/Half-Life_2_cover.jpg' }
+        ];
+        localStorage.setItem('games_v14', JSON.stringify(initialGames));
+      }
+      if (!localStorage.getItem('generations_v14')) {
+        localStorage.setItem('generations_v14', JSON.stringify(homeCategories.map(c => c.title)));
+      }
+    };
+    
+    const getGames = () => JSON.parse(localStorage.getItem('games_v14')) || [];
+    const getGenerations = () => JSON.parse(localStorage.getItem('generations_v14')) || [];
+
+    const IconHome = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>;
+    const IconAdmin = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09A1.65 1.65 0 0 0-1.51 1z"></path></svg>;
+
+    function App() {
+      const [currentPage, setCurrentPage] = useState('home');
+      const [games, setGames] = useState([]);
+      const [gens, setGens] = useState([]);
+      const [toast, setToast] = useState(null);
+      const [form, setForm] = useState({ title: '', generation: '', sales: '', year: '', developer: '', img: '' });
+      const [newGen, setNewGen] = useState('');
+
+      useEffect(() => { initDB(); setGames(getGames()); setGens(getGenerations()); }, []);
+
+      const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 3000); };
+      const saveToStorage = (newGames, newGens) => {
+        if(newGames) { setGames(newGames); localStorage.setItem('games_v14', JSON.stringify(newGames)); }
+        if(newGens) { setGens(newGens); localStorage.setItem('generations_v14', JSON.stringify(newGens)); }
+      };
+
+      const handleGameSubmit = (e) => {
+        e.preventDefault();
+        saveToStorage([...games, { ...form, id: Date.now(), sales: parseFloat(form.sales) }], null);
+        setForm({ title: '', generation: '', sales: '', year: '', developer: '', img: '' });
+        showToast('Jogo salvo com sucesso!');
+      };
+
+      const renderPage = () => {
+        if (currentPage === 'home') return (
+          <div>
+            <div className="hero">
+              <h1>Os Titãs da Indústria</h1>
+              <p>Explore os jogos mais vendidos da história, divididos por cada geração de consoles, portáteis e PC.</p>
+            </div>
+            <h2 className="section-title">Gerações de Consoles</h2>
+            <div className="category-grid">
+              {homeCategories.filter(c => c.type === 'console').map(c => (
+                <button key={c.title} className="category-card" onClick={() => setCurrentPage(c.title)}>
+                  <h3>{c.title}</h3><p>{c.desc}</p>
+                </button>
+              ))}
+            </div>
+            <h2 className="section-title">Outras Plataformas</h2>
+            <div className="category-grid">
+              {homeCategories.filter(c => c.type === 'outras').map(c => (
+                <button key={c.title} className="category-card" onClick={() => setCurrentPage(c.title)}>
+                  <h3>{c.title}</h3><p>{c.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+        
+        if (currentPage === 'admin') return (
+          <div>
+            <h2 className="section-title">Painel Administrativo</h2>
+            <div className="admin-panels">
+              <section className="admin-form">
+                <h3>Cadastrar Novo Jogo</h3>
+                <form onSubmit={handleGameSubmit}>
+                  <input placeholder="Título do Jogo" value={form.title} onChange={e => setForm({...form, title: e.target.value})} required />
+                  <select value={form.generation} onChange={e => setForm({...form, generation: e.target.value})} required>
+                    <option value="">Selecione a Plataforma...</option>
+                    {gens.map(g => <option key={g} value={g}>{g}</option>)}
+                  </select>
+                  <input type="number" step="0.1" placeholder="Vendas (em milhões)" value={form.sales} onChange={e => setForm({...form, sales: e.target.value})} required />
+                  <input type="number" placeholder="Ano de Lançamento" value={form.year} onChange={e => setForm({...form, year: e.target.value})} required />
+                  <input placeholder="Desenvolvedor / Estúdio" value={form.developer} onChange={e => setForm({...form, developer: e.target.value})} required />
+                  <input type="url" placeholder="Link da Capa (Imagem URL)" value={form.img} onChange={e => setForm({...form, img: e.target.value})} required />
+                  <button type="submit">Salvar Jogo</button>
+                </form>
+              </section>
+            </div>
+          </div>
+        );
+
+        const topGames = games.filter(g => g.generation === currentPage).sort((a, b) => Number(b.sales) - Number(a.sales)).slice(0, 10);
+        const currentCategory = homeCategories.find(c => c.title === currentPage);
+
+        return (
+          <div>
+            {currentCategory && currentCategory.bannerImgs && (
+              <div className="gen-banner">
+                <div className="gen-banner-images">
+                  {currentCategory.bannerImgs.map((img, idx) => (
+                    <img 
+                      key={idx} 
+                      src={img} 
+                      alt={`Console ${idx}`} 
+                      onError={(e) => { e.target.style.display = 'none'; }} 
+                    />
+                  ))}
+                </div>
+                <div className="gen-banner-overlay">
+                  <h2>{currentPage}</h2>
+                  <p>{currentCategory.desc}</p>
+                </div>
+              </div>
+            )}
+
+            {currentCategory && currentCategory.textTop && (
+              <div className="article-text">{currentCategory.textTop}</div>
+            )}
+
+            {topGames.length === 0 ? <p style={{color: '#94a3b8', fontSize: '1.1rem', margin: '20px 0'}}>Nenhum jogo cadastrado ainda. Vá ao Admin para adicionar!</p> : (
+              <div className="games-grid">
+                {topGames.map((game, i) => (
+                  <div className="game-card" key={game.id}>
+                    <span className="rank">#{i + 1}</span>
+                    <img 
+                      src={game.img} 
+                      alt={`Capa ${game.title}`} 
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://placehold.co/400x600/1e293b/818cf8?text=${encodeURIComponent(game.title)}`;
+                      }}
+                    />
+                    <div className="info">
+                      <h3>{game.title}</h3>
+                      <p><strong>Vendas:</strong> {game.sales} milhões</p>
+                      <p><strong>Lançamento:</strong> {game.year}</p>
+                      <p><strong>Estúdio:</strong> {game.developer}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {currentCategory && currentCategory.textBottom && (
+              <div className="article-text">{currentCategory.textBottom}</div>
+            )}
+          </div>
+        );
+      };
+
+      return (
+        <div>
+          <nav className="navbar">
+            <button className="brand" onClick={() => setCurrentPage('home')}>GameHistory</button>
+            <div className="navbar-actions">
+              <button className="btn-nav" onClick={() => setCurrentPage('home')}><IconHome /> Início</button>
+              <button className="btn-nav" onClick={() => setCurrentPage('admin')}><IconAdmin /> Admin</button>
+            </div>
+          </nav>
+          <div className="container">{renderPage()}</div>
+          {toast && <div className="toast">{toast}</div>}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
