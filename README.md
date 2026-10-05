@@ -1,25 +1,51 @@
-# 🎮 GameHistory - Os Titãs da Indústria
+# 🎮 GameHistory
 
-Aplicação web interativa desenvolvida para explorar a história dos videogames através dos jogos mais vendidos de todos os tempos, divididos por gerações de consoles, portáteis clássicos e a plataforma de computadores (PC Master Race).
-
-## 🚀 Sobre o Projeto
-O projeto foi estruturado para apresentar dados estatísticos e históricos consolidados da indústria de jogos eletrônicos. Ele conta com:
-- **Navegação por Gerações:** Da 3ª Geração (8-bits) até a atual 9ª Geração, além de seções dedicadas a Consoles Portáteis e PC.
-- **Painel Administrativo:** Permite cadastrar novos jogos dinamicamente no sistema.
-- **Persistência de Dados:** Utiliza o `localStorage` do navegador para salvar as informações cadastradas.
-- **Design Moderno:** Interface estilizada com paleta de cores voltada para o tema gamer, banners informativos e sistema de fallback automático para imagens de capas.
-
-## 🛠️ Tecnologias Utilizadas
-- **HTML5 & CSS3:** Estruturação e estilização responsiva.
-- **React 18 (via CDN):** Biblioteca principal para renderização de componentes.
-- **Babel Standalone:** Transpilação de JSX diretamente no navegador.
-- **JavaScript (ES6+):** Lógica da aplicação e manipulação de estado.
-
-## 🖥️ Como Executar Localmente
-Como a aplicação utiliza React via CDN e Babel em arquivo único (`index.html`), você não precisa instalar nenhum ambiente Node.js complexo:
-1. Baixe ou clone este repositório.
-2. Dê um duplo clique no arquivo **`index.html`** (ou abra-o em qualquer navegador web moderno).
-3. Pronto! O site rodará localmente com todo o banco de dados inicial carregado.
+**GameHistory** é uma enciclopédia web interativa de múltiplas páginas dedicada a documentar a evolução da indústria dos videogames através dos tempos. O projeto mapeia os jogos mais vendidos, dados de mercado e os maiores fenômenos comerciais da história, divididos cronologicamente por gerações de consoles, além de categorias exclusivas para computadores (PC), portáteis, jogos gratuitos (*Free-to-Play*), mercado *mobile* e o ranking histórico definitivo.
 
 ---
-Desenvolvido por **Handerson da Silva Crespo** 🚀
+
+## 🚀 Tecnologias Utilizadas
+
+* **HTML5**: Estruturação semântica e limpa de todas as páginas do sistema.
+* **CSS3**: Estilização personalizada, layout responsivo em grid, design system limpo e painel administrativo (CMS mockup).
+* **JavaScript**: Manipulação e interações fundamentais da interface.
+
+---
+
+## 📂 Estrutura do Projeto
+
+O site adota uma arquitetura modular baseada em páginas estáticas independentes interligadas por um menu de navegação global (`navbar`):
+
+* `index.html` — Página inicial com o hub de navegação por gerações e categorias.
+* `geracao2.html` — 1ª e 2ª Gerações (Magnavox Odyssey, Atari 2600).
+* `geracao3.html` — 3ª Geração (NES / 8-bit).
+* `geracao4.html` — 4ª Geração (SNES, Mega Drive / 16-bit).
+* `geracao5.html` — 5ª Geração (PlayStation, Nintendo 64 / 32/64-bit).
+* `geracao6.html` — 6ª Geração (PlayStation 2, Xbox, GameCube).
+* `geracao7.html` — 7ª Geração (PS3, Xbox 360, Wii).
+* `geracao8.html` — 8ª Geração (PS4, Xbox One, Nintendo Switch).
+* `geracao9.html` — 9ª Geração (PS5, Xbox Series X|S).
+* `pc.html` — Panorama do mercado de computadores (*PC Master Race*).
+* `portateis.html` — O domínio clássico da Nintendo em consoles portáteis (Game Boy ao DS).
+* `f2p.html` — Fenômenos *Free-to-Play* e ecossistema de eSports no PC.
+* `mobile.html` — Gigantes de downloads e engajamento em smartphones e tablets.
+* `todos-os-tempos.html` — O ranking definitivo consolidando vendas globais de todas as plataformas.
+* `admin.html` — Mockup funcional de painel administrativo (CMS) para controle de cadastros.
+* `css/style.css` — Folha de estilos centralizada do projeto.
+* `img/` — Repositório local de mídias e capas dos jogos.
+
+---
+
+## 🛠️ Como Executar o Projeto Localmente
+
+1. Certifique-se de ter clonado ou baixado este repositório em sua máquina.
+2. Abra a pasta do projeto em seu editor de código preferido (como o **VS Code**).
+3. Utilize uma extensão de servidor local (como o **Live Server**) para abrir o arquivo `index.html` diretamente no seu navegador.
+4. Navegue livremente pelas gerações e plataformas através do site!
+
+---
+
+## 📊 Decisões de Arquitetura e Modelagem
+
+* **Isolamento de Métricas:** Diferenciação clara entre o modelo tradicional de *cópias vendidas* (consoles e PC premium), *métricas de engajamento e jogadores ativos* (Free-to-Play) e *volume de downloads acumulados* (Mobile), garantindo rigidez analítica aos dados exibidos.
+* **Design Responsivo:** Grade de cards adaptável (`grid-template-columns`) otimizada para diferentes resoluções de tela.
