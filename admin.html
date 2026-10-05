@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel CMS - GameHistory</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Estilos exclusivos para a interface do Painel Admin */
+    .admin-container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #f4f4f9;
+      border-radius: 8px;
+      color: #333;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 1rem;
+    }
+    .admin-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .form-group input, .form-group select {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .form-full {
+      grid-column: span 2;
+    }
+    .btn-submit {
+      grid-column: span 2;
+      padding: 0.75rem;
+      background: #e50914; /* Mantendo o tom vermelho/gamer */
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    .btn-submit:hover {
+      background: #b20710;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .admin-table th, .admin-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .admin-table th {
+      background: #222;
+      color: #fff;
+    }
+    .btn-edit {
+      background: #007bff;
+      color: white;
+      padding: 0.4rem 0.8rem;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      margin-right: 0.5rem;
+    }
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+      padding: 0.4rem 0.8rem;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="brand">GameHistory</a>
+    <div class="navbar-actions">
+      <a href="index.html" class="btn-nav">Ver Site</a>
+      <a href="#" class="btn-nav" style="background: #555;">Sair</a>
+    </div>
+  </nav>
+
+  <div class="admin-container">
+    <div class="admin-header">
+      <h2>Painel Administrativo (CMS)</h2>
+      <p>Bem-vindo, Administrador</p>
+    </div>
+
+    <!-- Formulário de Mockup para adicionar novos jogos -->
+    <form class="admin-form" action="#" method="POST">
+      <div class="form-full">
+        <h3>Adicionar Novo Jogo</h3>
+      </div>
+      
+      <div class="form-group">
+        <label for="titulo">Título do Jogo</label>
+        <input type="text" id="titulo" placeholder="Ex: Half-Life 2">
+      </div>
+
+      <div class="form-group">
+        <label for="categoria">Categoria / Geração</label>
+        <select id="categoria">
+          <option value="gen3">3ª Geração</option>
+          <option value="gen4">4ª Geração</option>
+          <option value="gen5">5ª Geração</option>
+          <option value="gen6">6ª Geração</option>
+          <option value="gen7">7ª Geração</option>
+          <option value="gen8">8ª Geração</option>
+          <option value="gen9">9ª Geração</option>
+          <option value="pc">PC Master Race</option>
+          <option value="portateis">Portáteis</option>
+          <option value="todos">Mais Vendidos da História</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="plataforma">Plataforma(s)</label>
+        <input type="text" id="plataforma" placeholder="Ex: PC, Xbox">
+      </div>
+
+      <div class="form-group">
+        <label for="vendas">Vendas (em milhões)</label>
+        <input type="text" id="vendas" placeholder="Ex: 12,00 milhões">
+      </div>
+
+      <div class="form-group">
+        <label for="lancamento">Ano de Lançamento</label>
+        <input type="number" id="lancamento" placeholder="Ex: 2004">
+      </div>
+
+      <div class="form-group">
+        <label for="estudio">Estúdio Desenvolvedor</label>
+        <input type="text" id="estudio" placeholder="Ex: Valve">
+      </div>
+
+      <div class="form-group form-full">
+        <label for="imagem">Nome do Arquivo de Imagem (Pasta img/)</label>
+        <input type="text" id="imagem" placeholder="Ex: half-life-2.jpg">
+      </div>
+
+      <button type="submit" class="btn-submit">Salvar Jogo</button>
+    </form>
+
+    <!-- Tabela de Mockup listando jogos existentes -->
+    <h3>Jogos Recentes Adicionados</h3>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Título</th>
+          <th>Categoria</th>
+          <th>Vendas</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>001</td>
+          <td>Minecraft</td>
+          <td>História / PC</td>
+          <td>~300 mi</td>
+          <td>
+            <a href="#" class="btn-edit">Editar</a>
+            <a href="#" class="btn-delete">Excluir</a>
+          </td>
+        </tr>
+        <tr>
+          <td>002</td>
+          <td>Grand Theft Auto V</td>
+          <td>8ª Ger / PC</td>
+          <td>~200 mi</td>
+          <td>
+            <a href="#" class="btn-edit">Editar</a>
+            <a href="#" class="btn-delete">Excluir</a>
+          </td>
+        </tr>
+        <tr>
+          <td>003</td>
+          <td>Tetris</td>
+          <td>Portáteis (GB)</td>
+          <td>35,00 mi</td>
+          <td>
+            <a href="#" class="btn-edit">Editar</a>
+            <a href="#" class="btn-delete">Excluir</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
